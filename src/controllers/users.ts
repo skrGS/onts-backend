@@ -51,10 +51,17 @@ export const findUserRegister = async (
     const { registerNumber } = req.params;
     const user = await User.findOne({ registerNumber: registerNumber });
     if (!user) {
-      throw new MyError("Хэрэглэгч олдсонгүй", 404);
+      return res.status(201).json({
+        success: false,
+        message: "Хэрэглэгч олдсонгүй",
+      });
     }
-    return res.status(200).json(user);
+    return res.status(200).json({
+      success: true,
+      user,
+    });
   } catch (err) {
-    return res.sendStatus(500);
+    console.log(err);
+    throw new MyError("Серверийн алдаа гарлаа.", 500);
   }
 };
