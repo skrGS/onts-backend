@@ -55,6 +55,6 @@ export const findUserRegister = async (
     }
     return res.status(200).json(user);
   } catch (err) {
-    return res.sendStatus(400);
+    return res.sendStatus(500);
   }
 };
