@@ -24,6 +24,7 @@ export interface IUser extends mongoose.Document {
     salt: string;
     sessionToken: string;
   };
+
   sessionScope: string;
   createdAt: Date;
   validatePassword: (password: string) => Promise<boolean>;
@@ -33,7 +34,11 @@ export interface IUser extends mongoose.Document {
 const UserSchema = new mongoose.Schema({
   lastName: String,
   firstName: String,
-  registerNumber: String,
+  registerNumber: {
+    type: String,
+    unique: true,
+  },
+  invoiceId: String,
   phone: String,
   emergencyPhone: String,
   city: String,
@@ -71,8 +76,6 @@ const UserSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  username: String,
-  invoiceId: String,
 });
 
 export const User = mongoose.model("User", UserSchema);

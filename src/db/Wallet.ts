@@ -34,7 +34,7 @@ const WalletSchema: Schema = new Schema<IWallet>({
     },
   ],
   qrImage: { type: String, required: false },
-  invoiceId: { type: String, required: false, unique: true },
+  invoiceId: { type: String, required: false },
   amount: { type: Number, required: false },
   createdAt: { type: Date, default: Date.now },
   isPayment: {

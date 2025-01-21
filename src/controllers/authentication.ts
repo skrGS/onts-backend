@@ -78,7 +78,10 @@ export const createProfile = async (req: Request, res: express.Response) => {
     });
     await wallet.save();
 
-    res.status(200).json(wallet._id);
+    res.status(200).json({
+      walletId: wallet._id,
+      userId: newUser._id,
+    });
   } catch (error) {
     throw new MyError("Серверийн алдаа гарлаа.", 500);
   }
@@ -142,6 +145,7 @@ export const paymentQrCheck = async (req: Request, res: express.Response) => {
   });
   const data = await response.json();
   const count = data.count;
+  console.log(data);
   if (count === 0) {
     res.status(200).json({
       success: false,
