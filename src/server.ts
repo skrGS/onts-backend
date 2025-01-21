@@ -19,6 +19,8 @@ const allowedOrigins = [
   "http://localhost:3000",
   "http://localhost:3012",
   "https://test.missk.mn",
+  "https://onts.boosters.mn",
+  "https://www.onts.boosters.mn",
   "https://missk.mn",
 ];
 
