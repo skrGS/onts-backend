@@ -64,7 +64,7 @@ export const createProfile = async (req: Request, res: express.Response) => {
         invoice_receiver_code: newUser.registerNumber,
         invoice_description: `Хэрэглэгчийн мэдээлэл бүртгэл: ${newUser.phone}`,
         amount: amount,
-        callback_url: `https://onts800.mn/callbacks/${wallet._id}/${newUser._id}`,
+        callback_url: `https://onts.boosters.mn/callbacks/${wallet._id}/${newUser._id}`,
       }),
     });
 

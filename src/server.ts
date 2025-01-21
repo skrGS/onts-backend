@@ -65,7 +65,7 @@ mongoose.connection.once("open", async () => {
   await initDatabase();
 });
 
-app.use("/app", createClientRouter());
+app.use("/", createClientRouter());
 app.use(errorHandler);
 
 app.listen(port, () => {
