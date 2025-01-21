@@ -51,7 +51,7 @@ export const findUserRegister = async (
     const { registerNumber } = req.params;
     const user = await User.findOne({ registerNumber: registerNumber });
     if (!user) {
-      return res.status(201).json({
+      return res.status(200).json({
         success: false,
         message: "Хэрэглэгч олдсонгүй",
       });
