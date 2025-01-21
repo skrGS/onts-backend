@@ -48,7 +48,7 @@ app.use(cookieParser());
 
 app.use(express.static(path.join(process.cwd(), "public")));
 
-const MONGO_URI = "mongodb+srv://noskr:0401@mydb.5msnhth.mongodb.net/tushig";
+const MONGO_URI = "mongodb+srv://noskr:0401@mydb.5msnhth.mongodb.net/onts";
 
 mongoose.Promise = Promise;
 mongoose.connect(MONGO_URI, {

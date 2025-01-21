@@ -48,7 +48,7 @@ export const findUserRegister = async (
   res: express.Response
 ) => {
   try {
-    const { registerNumber } = req.body;
+    const { registerNumber } = req.params;
     const user = await User.findOne({ registerNumber: registerNumber });
     if (!user) {
       throw new MyError("Хэрэглэгч олдсонгүй", 404);
