@@ -13,7 +13,7 @@ export interface IUser extends mongoose.Document {
   city: string;
   district: string;
   school: string;
-  class: string;
+  classes: string;
   classGroup: string;
   lesson: string;
   teacher: string;
@@ -27,6 +27,8 @@ export interface IUser extends mongoose.Document {
 
   sessionScope: string;
   createdAt: Date;
+  paymentSuccessDate: Date;
+  isPayed: boolean;
   validatePassword: (password: string) => Promise<boolean>;
   getJsonWebToken(): string;
 }
@@ -44,7 +46,7 @@ const UserSchema = new mongoose.Schema({
   city: String,
   district: String,
   school: String,
-  class: String,
+  classes: String,
   classGroup: String,
   lesson: String,
   teacher: String,
@@ -75,6 +77,13 @@ const UserSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now,
+  },
+  isPayed: {
+    type: Boolean,
+    default: false,
+  },
+  paymentSuccessDate: {
+    type: Date,
   },
 });
 

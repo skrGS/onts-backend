@@ -34,6 +34,7 @@ export const createProfile = async (req: Request, res: express.Response) => {
     lesson,
     teacher,
     level,
+    classes,
   } = req.body;
   const wallet = await Wallet.create({});
   const token = await getToken();
@@ -51,6 +52,7 @@ export const createProfile = async (req: Request, res: express.Response) => {
       lesson,
       teacher,
       level,
+      classes,
     });
     const response = await fetch("https://merchant.qpay.mn/v2/invoice", {
       method: "POST",
@@ -88,7 +90,6 @@ export const createProfile = async (req: Request, res: express.Response) => {
 };
 
 export const hasPayment = async (req: Request, res: express.Response) => {
-  console.log("object", req.params.id, req.params.numId);
   try {
     const wallet = await Wallet.findById(req.params.id);
     const user = await User.findById(req.params.numId);
@@ -106,6 +107,8 @@ export const hasPayment = async (req: Request, res: express.Response) => {
     wallet.isPayment = true;
 
     user.spentAmount += wallet.amount;
+    user.isPayed = true;
+    user.paymentSuccessDate = new Date();
 
     await Promise.all([user.save(), wallet.save()]);
 
@@ -146,7 +149,6 @@ export const paymentQrCheck = async (req: Request, res: express.Response) => {
   });
   const data = await response.json();
   const count = data.count;
-  console.log(data);
   if (count === 0) {
     res.status(200).json({
       success: false,
@@ -155,6 +157,8 @@ export const paymentQrCheck = async (req: Request, res: express.Response) => {
   } else {
     wallet.isPayment = true;
     user.spentAmount += wallet.amount;
+    user.isPayed = true;
+    user.paymentSuccessDate = new Date();
     await Promise.all([user.save(), wallet.save()]);
     res.status(200).json({
       success: true,
