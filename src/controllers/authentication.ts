@@ -11,7 +11,7 @@ export const getToken = async (): Promise<string> => {
   const response = await fetch("https://merchant.qpay.mn/v2/auth/token", {
     method: "POST",
     headers: {
-      Authorization: `Basic U0FOVEFfTU46Z3F2SWlKSnI=`,
+      Authorization: `Basic T05UU19NTjpmajRuMVcxeg=`,
       "Content-Type": "application/json",
     },
   });
@@ -62,12 +62,12 @@ export const createProfile = async (req: Request, res: express.Response) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        invoice_code: "SANTA_MN_INVOICE",
+        invoice_code: "ONTS_MN_INVOICE",
         sender_invoice_no: "12345678",
         invoice_receiver_code: newUser.registerNumber,
         invoice_description: `Хэрэглэгчийн мэдээлэл бүртгэл: ${newUser.phone}`,
         amount: amount,
-        callback_url: `https://onts.boosters.mn/callbacks/${wallet._id}/${newUser._id}`,
+        callback_url: `https://onts800.boosters.mn/callbacks/${wallet._id}/${newUser._id}`,
       }),
     });
 
@@ -182,12 +182,12 @@ export const createInvoice = async (req: Request, res: express.Response) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        invoice_code: "SANTA_MN_INVOICE",
+        invoice_code: "ONTS_MN_INVOICE",
         sender_invoice_no: "12345678",
         invoice_receiver_code: user?.registerNumber + "regain",
         invoice_description: `Хэрэглэгчийн мэдээлэл бүртгэл: ${user?.phone}`,
         amount: amount,
-        callback_url: `https://onts.boosters.mn/callbacks/${wallet._id}/${user._id}`,
+        callback_url: `https://onts800.boosters.mn/callbacks/${wallet._id}/${user._id}`,
       }),
     });
 
