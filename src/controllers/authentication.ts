@@ -53,6 +53,7 @@ export const createProfile = async (req: Request, res: express.Response) => {
       teacher,
       level,
       classes,
+      wallet: wallet._id,
     });
     const response = await fetch("https://merchant.qpay.mn/v2/invoice", {
       method: "POST",
@@ -198,7 +199,11 @@ export const createInvoice = async (req: Request, res: express.Response) => {
       urls: data.urls,
       user: user._id,
     });
+    user.set({
+      wallet: wallet._id,
+    });
     await wallet.save();
+    await user.save();
 
     res.status(200).json({
       walletId: wallet._id,
