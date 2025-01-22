@@ -88,6 +88,7 @@ export const createProfile = async (req: Request, res: express.Response) => {
 };
 
 export const hasPayment = async (req: Request, res: express.Response) => {
+  console.log("object", req.params.id, req.params.numId);
   try {
     const wallet = await Wallet.findById(req.params.id);
     const user = await User.findById(req.params.numId);
