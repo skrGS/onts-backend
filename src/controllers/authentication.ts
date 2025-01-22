@@ -137,7 +137,7 @@ export const paymentQrCheck = async (req: Request, res: express.Response) => {
     },
     body: JSON.stringify({
       object_type: "INVOICE",
-      invoice_id: id,
+      object_id: id,
       offset: {
         page_number: 1,
         page_limit: 100,
