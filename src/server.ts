@@ -17,7 +17,9 @@ const port = 3011;
 
 const allowedOrigins = [
   "http://localhost:3000",
+  "http://localhost:3001",
   "http://localhost:3012",
+  "http://localhost:3011",
   "https://test.missk.mn",
   "https://onts.boosters.mn",
   "https://www.onts.boosters.mn",

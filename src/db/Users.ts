@@ -24,7 +24,7 @@ export interface IUser extends mongoose.Document {
     salt: string;
     sessionToken: string;
   };
-  wallet: mongoose.Schema.Types.ObjectId | undefined;
+  wallet: mongoose.Schema.Types.ObjectId | null;
 
   sessionScope: string;
   createdAt: Date;
