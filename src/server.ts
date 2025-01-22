@@ -22,6 +22,10 @@ const allowedOrigins = [
   "https://onts.boosters.mn",
   "https://www.onts.boosters.mn",
   "https://missk.mn",
+  "https://onts800.mn",
+  "https://www.onts800.mn",
+  "http://www.167.172.70.96.mn",
+  "http://167.172.70.96.mn",
 ];
 
 app.use(
