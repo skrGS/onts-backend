@@ -164,3 +164,47 @@ export const paymentQrCheck = async (req: Request, res: express.Response) => {
     });
   }
 };
+
+export const createInvoice = async (req: Request, res: express.Response) => {
+  const wallet = await Wallet.create({});
+  const token = await getToken();
+  const { registerNumber, amount } = req.body;
+  const user = await User.findOne({ registerNumber: registerNumber });
+  if (!user) {
+    throw new MyError("Хэрэглэгч олдсонгүй", 404);
+  }
+  try {
+    const response = await fetch("https://merchant.qpay.mn/v2/invoice", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        invoice_code: "SANTA_MN_INVOICE",
+        sender_invoice_no: "12345678",
+        invoice_receiver_code: user?.registerNumber + "regain",
+        invoice_description: `Хэрэглэгчийн мэдээлэл бүртгэл: ${user?.phone}`,
+        amount: amount,
+        callback_url: `https://onts.boosters.mn/callbacks/${wallet._id}/${user._id}`,
+      }),
+    });
+
+    const data = await response.json();
+    wallet.set({
+      qrImage: data.qr_image,
+      invoiceId: data.invoice_id,
+      amount: amount,
+      urls: data.urls,
+      user: user._id,
+    });
+    await wallet.save();
+
+    res.status(200).json({
+      walletId: wallet._id,
+      userId: user._id,
+    });
+  } catch (error) {
+    throw new MyError("Серверийн алдаа гарлаа.", 500);
+  }
+};
