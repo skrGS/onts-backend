@@ -107,8 +107,7 @@ export const hasPayment = async (req: Request, res: express.Response) => {
     wallet.isPayment = true;
 
     user.spentAmount += wallet.amount;
-    user.isPayed = true;
-    user.paymentSuccessDate = new Date();
+    user.wallet = wallet._id as any;
 
     await Promise.all([user.save(), wallet.save()]);
 
@@ -157,8 +156,7 @@ export const paymentQrCheck = async (req: Request, res: express.Response) => {
   } else {
     wallet.isPayment = true;
     user.spentAmount += wallet.amount;
-    user.isPayed = true;
-    user.paymentSuccessDate = new Date();
+    user.wallet = wallet._id as any;
     await Promise.all([user.save(), wallet.save()]);
     res.status(200).json({
       success: true,

@@ -24,11 +24,10 @@ export interface IUser extends mongoose.Document {
     salt: string;
     sessionToken: string;
   };
+  wallet: mongoose.Schema.Types.ObjectId | undefined;
 
   sessionScope: string;
   createdAt: Date;
-  paymentSuccessDate: Date;
-  isPayed: boolean;
   validatePassword: (password: string) => Promise<boolean>;
   getJsonWebToken(): string;
 }
@@ -55,6 +54,11 @@ const UserSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  wallet: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Wallet",
+    required: false,
+  },
   authentication: {
     password: {
       type: String,
@@ -77,13 +81,6 @@ const UserSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now,
-  },
-  isPayed: {
-    type: Boolean,
-    default: false,
-  },
-  paymentSuccessDate: {
-    type: Date,
   },
 });
 
