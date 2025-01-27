@@ -55,6 +55,12 @@ export const login = async (req: express.Request, res: express.Response) => {
   }
 };
 
+export const register = async (req: express.Request, res: express.Response) => {
+  const { phone, password, role } = req.body;
+  const newUser = createUser({ phone, password, role });
+  return res.status(200).json(newUser);
+};
+
 export const getToken = async (): Promise<string> => {
   const response = await fetch("https://merchant.qpay.mn/v2/auth/token", {
     method: "POST",
