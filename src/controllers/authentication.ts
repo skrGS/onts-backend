@@ -1,11 +1,59 @@
 import express from "express";
-import { createUser, User } from "../db/Users";
-import { Request } from "../middlewares/sign";
+import { createUser, IUser, User } from "../db/Users";
+import { createExpireIn, Request, signIn } from "../middlewares/sign";
 import MyError from "../utils/myError";
 import Wallet from "../db/Wallet";
+import { authentication } from "../helpers";
 /**
  * @author tushig
  */
+
+export const login = async (req: express.Request, res: express.Response) => {
+  const { phone, password, expoPushToken } = req.body;
+
+  try {
+    const user = (await User.findOne({ phone: phone }).select(
+      "+authentication.salt +authentication.password"
+    )) as IUser;
+
+    if (!user) {
+      throw new MyError("Хэрэглэгч олдсонгүй.", 401);
+    }
+
+    if (
+      !user.authentication ||
+      !user.authentication.salt ||
+      !user.authentication.password
+    ) {
+      throw new MyError("Нэвтрэх мэдээлэл алга байна.", 401);
+    }
+
+    const expectedHash = authentication(user.authentication.salt, password);
+    if (user.authentication.password !== expectedHash) {
+      throw new MyError("Нууц үг буруу байна.", 401);
+    }
+
+    user.set({
+      expoPushToken,
+      sessionScope: "AUTHORIZED",
+    });
+    await user.save();
+
+    signIn(
+      res,
+      {
+        user: user,
+        expiresIn: createExpireIn(24 * 30, "hours"),
+      },
+      "AUTHORIZED"
+    );
+  } catch (error) {
+    if (error instanceof MyError) {
+      throw new MyError(error.message, error.statusCode);
+    }
+    throw new MyError("Серверийн алдаа гарлаа.", 500);
+  }
+};
 
 export const getToken = async (): Promise<string> => {
   const response = await fetch("https://merchant.qpay.mn/v2/auth/token", {

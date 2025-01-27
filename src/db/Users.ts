@@ -9,6 +9,7 @@ export interface IUser extends mongoose.Document {
   firstName: string;
   registerNumber: string;
   phone: string;
+  role: string;
   emergencyPhone: string;
   city: string;
   district: string;
@@ -54,6 +55,11 @@ const UserSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  role: {
+    enum: ["user", "operator", "admin"],
+    default: "user",
+    type: String,
+  },
   wallet: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Wallet",
@@ -97,11 +103,11 @@ export const createUser = async (values: Record<string, any>) =>
 export const findUser = async (username: string) => {
   return User.findOne({ username });
 };
-export const getUsers = async () => {
-  return User.find();
+export const getUsers = async (filters?: any) => {
+  return User.find(filters);
 };
 export const getUserById = async (id: string) => {
-  return User.findById(id).populate("role");
+  return User.findById(id);
 };
 export const updateUser = async (id: string, authentication: any) => {
   return User.findByIdAndUpdate(

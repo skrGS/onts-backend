@@ -9,12 +9,36 @@ export const getAllUsers = async (
   req: express.Request,
   res: express.Response
 ) => {
+  const { city, isPayment } = req.query;
   try {
-    const users = await getUsers();
+    const filters: { [key: string]: any } = {};
+    if (city) {
+      filters.city = city;
+    }
+    if (isPayment) {
+      filters.isPayment = isPayment;
+    }
+    const users = await getUsers(filters);
     return res.status(200).json(users).end();
   } catch (error) {
     return res.sendStatus(400);
   }
+};
+
+export const paymentSuccess = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  const { userId } = req.params;
+  const user = await User.findByIdAndUpdate(
+    userId,
+    { isPayment: true },
+    { new: true }
+  );
+  if (!user) {
+    throw new MyError("Хэрэглэгч олдсонгүй", 404);
+  }
+  return res.status(200).json(user);
 };
 
 export const deleteUser = async (
