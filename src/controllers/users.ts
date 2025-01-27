@@ -2,6 +2,7 @@ import express from "express";
 
 import { getUsers, deleteUserById, User } from "../db/Users";
 import MyError from "../utils/myError";
+import Wallet from "../db/Wallet";
 /**
  * @author tushig
  */
@@ -30,13 +31,17 @@ export const paymentSuccess = async (
   res: express.Response
 ) => {
   const { userId } = req.params;
-  const user = await User.findByIdAndUpdate(
-    userId,
+  const user = await User.findById(userId);
+  if (!user) {
+    throw new MyError("Хэрэглэгч олдсонгүй", 404);
+  }
+  const wallet = await Wallet.findByIdAndUpdate(
+    user.wallet,
     { isPayment: true },
     { new: true }
   );
-  if (!user) {
-    throw new MyError("Хэрэглэгч олдсонгүй", 404);
+  if (!wallet) {
+    throw new MyError("Амжилтгүй хөгжүүлэгчид хандана уу!", 404);
   }
   return res.status(200).json(user);
 };
