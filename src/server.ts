@@ -29,6 +29,7 @@ const allowedOrigins = [
   "http://www.167.172.70.96.mn",
   "http://167.172.70.96.mn",
   "https://onts-admin.vercel.app",
+  "https://www.onts-admin.vercel.app",
   "https://admin.onts800.com",
   "https://www.admin.onts800.com",
 ];
