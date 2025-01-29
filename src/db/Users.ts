@@ -104,7 +104,7 @@ export const findUser = async (username: string) => {
   return User.findOne({ username });
 };
 export const getUsers = async (filters?: any) => {
-  return User.find(filters);
+  return User.find(filters).populate("wallet");
 };
 export const getUserById = async (id: string) => {
   return User.findById(id);

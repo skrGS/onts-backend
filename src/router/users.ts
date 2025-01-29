@@ -4,16 +4,20 @@ import {
   getAllUsers,
   findUserRegister,
   paymentSuccess,
+  me,
 } from "../controllers/users";
 import authentication from "./authentication";
-import { register } from "../controllers/authentication";
+import { login, register } from "../controllers/authentication";
+import { auth } from "../middlewares";
 
 export default (router: express.Router) => {
   router.get("/users/:registerNumber", findUserRegister);
+  router.post("/user/login", login);
+  router.post("/user/register", register);
   authentication(router);
-  router.get("/users", getAllUsers);
-  router.get("/user-payment-success/:id", paymentSuccess);
-  router.post("/register", register);
+  router.get("/users", auth, getAllUsers);
+  router.post("/user/payment-success/:id", auth, paymentSuccess);
+  router.get("/user/me", auth, me);
 
   return router;
 };

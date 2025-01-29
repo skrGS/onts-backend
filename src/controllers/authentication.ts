@@ -4,13 +4,14 @@ import { createExpireIn, Request, signIn } from "../middlewares/sign";
 import MyError from "../utils/myError";
 import Wallet from "../db/Wallet";
 import { authentication } from "../helpers";
+import crypto from "crypto";
 /**
  * @author tushig
  */
 
 export const login = async (req: express.Request, res: express.Response) => {
-  const { phone, password, expoPushToken } = req.body;
-
+  const { phone, password } = req.body;
+  console.log(phone, password);
   try {
     const user = (await User.findOne({ phone: phone }).select(
       "+authentication.salt +authentication.password"
@@ -34,7 +35,6 @@ export const login = async (req: express.Request, res: express.Response) => {
     }
 
     user.set({
-      expoPushToken,
       sessionScope: "AUTHORIZED",
     });
     await user.save();
@@ -55,10 +55,51 @@ export const login = async (req: express.Request, res: express.Response) => {
   }
 };
 
+function generatePassword(length = 6) {
+  const chars =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let password = "";
+  for (let i = 0; i < length; i++) {
+    password += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return password;
+}
+const random = () => crypto.randomBytes(128).toString("base64");
 export const register = async (req: express.Request, res: express.Response) => {
-  const { phone, password, role } = req.body;
-  const newUser = createUser({ phone, password, role });
-  return res.status(200).json(newUser);
+  const { phone, password, role = "admin", registerNumber } = req.body;
+  if (!phone) {
+    throw new MyError("Утасны дугаар оруулна уу!", 403);
+  }
+  if (!password) {
+    throw new MyError("Нууц үг оруулна уу!", 403);
+  }
+  if (!role) {
+    throw new MyError("Хэрэглэгчийн эрх оруулна уу!", 403);
+  }
+  const salt = random();
+  const auth = {
+    password: authentication(salt, password),
+    salt,
+  };
+
+  try {
+    const newUser = new User({
+      phone,
+      password,
+      role,
+      authentication: auth,
+      registerNumber: generatePassword(),
+    });
+
+    if (!newUser) {
+      throw new MyError("Хэрэглэгч хадгалахад алдаа гарлаа!", 403);
+    }
+    await newUser.save();
+    return res.status(200).json(newUser);
+  } catch (err) {
+    console.log(err);
+    throw new MyError("Серверийн алдаа!", 403);
+  }
 };
 
 export const getToken = async (): Promise<string> => {
