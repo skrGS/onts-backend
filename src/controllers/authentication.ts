@@ -67,6 +67,10 @@ function generatePassword(length = 6) {
 const random = () => crypto.randomBytes(128).toString("base64");
 export const register = async (req: express.Request, res: express.Response) => {
   const { phone, password, role = "admin", registerNumber } = req.body;
+  const existingUser = await User.findOne({ phone });
+  if (existingUser) {
+    throw new MyError("Утасны дугаар бүртгэлтэй байна!", 403);
+  }
   if (!phone) {
     throw new MyError("Утасны дугаар оруулна уу!", 403);
   }
@@ -305,6 +309,26 @@ export const createInvoice = async (req: Request, res: express.Response) => {
       userId: user._id,
     });
   } catch (error) {
+    throw new MyError("Серверийн алдаа гарлаа.", 500);
+  }
+};
+
+export const deleteUser = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  const { id } = req.params;
+  try {
+    const user = await User.findByIdAndDelete(id);
+    if (!user) {
+      throw new MyError("Хэрэглэгч олдсонгүй", 404);
+    }
+    res.status(200).json({
+      success: true,
+      message: "Хэрэглэгч амжилттай устгагдлаа",
+    });
+  } catch (error) {
+    console.log(error);
     throw new MyError("Серверийн алдаа гарлаа.", 500);
   }
 };

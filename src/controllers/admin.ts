@@ -80,6 +80,14 @@ export const dashboard = async (
         levelData[item._id].unpaid = item.totalUnpaid;
       }
     });
+    const successPayment =
+      levelData["Бага(3-5-р анги)"].paid +
+      levelData["Дунд(6-9-р анги)"].paid +
+      levelData["Ахлах(10-12-р анги)"].paid;
+    const unsuccessPayment =
+      levelData["Бага(3-5-р анги)"].unpaid +
+      levelData["Дунд(6-9-р анги)"].unpaid +
+      levelData["Ахлах(10-12-р анги)"].unpaid;
 
     // Step 4: Send Response
     res.status(200).json({
@@ -90,6 +98,8 @@ export const dashboard = async (
       level2unpayment: levelData["Дунд(6-9-р анги)"].unpaid,
       level3unpayment: levelData["Ахлах(10-12-р анги)"].unpaid,
       totalAmount,
+      successPayment,
+      unsuccessPayment,
     });
   } catch (error) {
     console.error("Error fetching dashboard data:", error);

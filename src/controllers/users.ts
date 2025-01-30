@@ -1,6 +1,6 @@
 import express from "express";
 
-import { getUsers, deleteUserById, User } from "../db/Users";
+import { deleteUserById, User } from "../db/Users";
 import MyError from "../utils/myError";
 import Wallet from "../db/Wallet";
 import { Request } from "../middlewares/sign";
@@ -24,19 +24,75 @@ export const getAllUsers = async (
   req: express.Request,
   res: express.Response
 ) => {
-  const { city, isPayment } = req.query;
+  const { city, isPayment, page, registerNumber } = req.query;
+  const pageNumber = Math.max(Number(page), 1);
+
   try {
+    // Construct filters object for users
     const filters: { [key: string]: any } = {};
-    if (city) {
-      filters.city = city;
+
+    // City filter with regex
+    if (city && typeof city === "string" && city.trim() !== "") {
+      filters.city = { $regex: new RegExp(city.trim(), "i") }; // Case-insensitive search
     }
-    if (isPayment) {
-      filters.isPayment = isPayment;
+
+    // Register number filter
+    if (registerNumber) {
+      filters.registerNumber = {
+        $regex: new RegExp((registerNumber as string).trim(), "i"),
+      };
     }
-    const users = await getUsers(filters);
-    return res.status(200).json(users).end();
+
+    // Wallet isPayment filter
+    if (
+      isPayment !== "" &&
+      isPayment !== undefined &&
+      (isPayment.toString() === "true" || isPayment.toString() === "false")
+    ) {
+      const isPaymentBool = isPayment.toString() === "true";
+      filters.wallet = {
+        $in: await Wallet.find({ isPayment: isPaymentBool }).distinct("_id"),
+      };
+    }
+
+    // Fetch users with the filters applied, using .lean() for better performance
+    const total = await User.countDocuments(filters);
+    const users = await User.find(filters)
+      .populate({
+        path: "wallet",
+      })
+      .skip((pageNumber - 1) * 10)
+      .limit(10)
+      .lean(); // Use lean to get plain JS objects for faster access
+
+    const totalPages = Math.ceil(total / 10);
+
+    return res.status(200).json({
+      users,
+      total,
+      totalPages,
+      currentPage: pageNumber,
+    });
   } catch (error) {
+    console.error(error);
     return res.sendStatus(400);
+  }
+};
+
+export const updateUser = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  try {
+    const { id } = req.params;
+    const updateData = req.body;
+    const user = await User.findByIdAndUpdate(id, updateData, { new: true });
+    if (!user) {
+      throw new MyError("Хэрэглэгч олдсонгүй", 404);
+    }
+    return res.status(200).json(user);
+  } catch (error) {
+    throw new MyError("Амжилтгүй хөгжүүлэгчид хандана уу!", 500);
   }
 };
 
