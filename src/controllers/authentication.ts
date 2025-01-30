@@ -66,7 +66,7 @@ function generatePassword(length = 6) {
 }
 const random = () => crypto.randomBytes(128).toString("base64");
 export const register = async (req: express.Request, res: express.Response) => {
-  const { phone, password, role = "admin", registerNumber } = req.body;
+  const { phone, password, role = "admin" } = req.body;
   const existingUser = await User.findOne({ phone });
   if (existingUser) {
     throw new MyError("Утасны дугаар бүртгэлтэй байна!", 403);
@@ -162,7 +162,7 @@ export const createProfile = async (req: Request, res: express.Response) => {
       },
       body: JSON.stringify({
         invoice_code: "ONTS_MN_INVOICE",
-        sender_invoice_no: "12345678",
+        sender_invoice_no: newUser.registerNumber,
         invoice_receiver_code: newUser.registerNumber,
         invoice_description: newUser.registerNumber,
         amount: amount,
@@ -282,7 +282,7 @@ export const createInvoice = async (req: Request, res: express.Response) => {
       },
       body: JSON.stringify({
         invoice_code: "ONTS_MN_INVOICE",
-        sender_invoice_no: "12345678",
+        sender_invoice_no: user.registerNumber,
         invoice_receiver_code: user?.registerNumber,
         invoice_description: user.registerNumber,
         amount: amount,
