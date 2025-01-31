@@ -185,8 +185,6 @@ export const downloadUsers = async (
       };
     }
 
-    console.log(query);
-
     // Fetch users and populate wallet details
     const users = await User.find(query).populate("wallet");
 
