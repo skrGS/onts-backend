@@ -155,3 +155,27 @@ export const chartDashboard = async (
     res.status(500).json({ message: "Серверийн алдаа гарлаа." });
   }
 };
+
+export const downloadUsers = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  try {
+    const { startDate, endDate } = req.query as {
+      startDate?: string;
+      endDate?: string;
+    };
+
+    let query: any = {};
+    if (startDate) query.createdAt = { $gte: new Date(startDate) };
+    if (endDate)
+      query.createdAt = { ...query.createdAt, $lte: new Date(endDate) };
+
+    // Fetch users and populate wallet details
+    const users = await User.find(query).populate("wallet");
+
+    res.status(200).json(users).end();
+  } catch (error) {
+    throw new MyError("Серверийн алдаа!", 500);
+  }
+};
