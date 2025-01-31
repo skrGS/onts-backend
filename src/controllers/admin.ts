@@ -161,15 +161,31 @@ export const downloadUsers = async (
   res: express.Response
 ) => {
   try {
-    const { startDate, endDate } = req.query as {
+    const { startDate, endDate, isPayment } = req.query as {
       startDate?: string;
       endDate?: string;
+      isPayment?: boolean;
     };
 
     let query: any = {};
-    if (startDate) query.createdAt = { $gte: new Date(startDate) };
-    if (endDate)
+    if (startDate) {
+      query.createdAt = { $gte: new Date(startDate) };
+    }
+    if (endDate) {
       query.createdAt = { ...query.createdAt, $lte: new Date(endDate) };
+    }
+    if (
+      isPayment !== undefined &&
+      isPayment !== null &&
+      (isPayment.toString() === "true" || isPayment.toString() === "false")
+    ) {
+      const isPaymentBool = isPayment.toString() === "true";
+      query.wallet = {
+        $in: await Wallet.find({ isPayment: isPaymentBool }).distinct("_id"),
+      };
+    }
+
+    console.log(query);
 
     // Fetch users and populate wallet details
     const users = await User.find(query).populate("wallet");
