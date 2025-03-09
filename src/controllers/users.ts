@@ -115,7 +115,16 @@ export const paymentSuccess = async (
       { new: true }
     );
     if (!wallet) {
-      throw new MyError("Амжилтгүй хөгжүүлэгчид хандана уу!", 404);
+       await Wallet.create({
+        isPayment: true,
+        amount: user.level === "Бага(3-5-р анги)"
+        ? 20000
+        : user.level === "Дунд(6-9-р анги)"
+        ? 25000
+        : 30000,
+        user: user._id,
+      })
+      return res.status(200).json(user);
     }
     if (wallet.amount === 0) {
       const amount =
