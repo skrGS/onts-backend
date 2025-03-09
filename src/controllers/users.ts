@@ -115,7 +115,7 @@ export const paymentSuccess = async (
       { new: true }
     );
     if (!wallet) {
-       await Wallet.create({
+       const wallet = await Wallet.create({
         isPayment: true,
         amount: user.level === "Бага(3-5-р анги)"
         ? 20000
@@ -124,6 +124,9 @@ export const paymentSuccess = async (
         : 30000,
         user: user._id,
       })
+      await user.set({
+        wallet: wallet._id
+      }).save()
       return res.status(200).json(user);
     }
     if (wallet.amount === 0) {
