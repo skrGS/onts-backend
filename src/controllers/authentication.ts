@@ -307,6 +307,7 @@ export const createInvoice = async (req: Request, res: express.Response) => {
     res.status(200).json({
       walletId: wallet._id,
       userId: user._id,
+      invoiceId: data.invoice_id
     });
   } catch (error) {
     throw new MyError("Серверийн алдаа гарлаа.", 500);
