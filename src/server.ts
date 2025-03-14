@@ -32,6 +32,8 @@ const allowedOrigins = [
   "https://www.onts-admin.vercel.app",
   "https://admin.onts800.com",
   "https://www.admin.onts800.com",
+  "https://noskr.boosters.mn",
+  "https://www.noskr.boosters.com",
 ];
 
 app.use(
